@@ -65,6 +65,11 @@ class ApphudSdkModule(reactContext: ReactApplicationContext) : ReactContextBaseJ
   }
 
   @ReactMethod
+  fun checkEligibilitiesForIntroductoryOffer(productIdentifier: String, promise: Promise) {
+    promise.resolve(false)
+  }
+
+  @ReactMethod
   fun paywalls(promise: Promise) {
     Apphud.paywallsDidLoadCallback { list, error ->
       if (error != null) {

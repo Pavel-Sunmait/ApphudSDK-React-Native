@@ -97,6 +97,14 @@ export type ApphudSdkType = {
    * @returns RestorePurchase object. See `RestorePurchase` for details.
    */
   restorePurchases(): Promise<RestorePurchase>;
+  /**
+   * Available on iOS only.
+   * 
+   * Check eligibility for introductory offer
+  */
+  checkEligibilitiesForIntroductoryOffer(
+    productIdentifier: string
+  ): Promise<boolean>;
 
   /**
    * Available on Android only.
