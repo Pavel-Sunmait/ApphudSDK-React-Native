@@ -19,6 +19,10 @@ const styles = StyleSheet.create({
   root: {
     padding: 8,
   },
+  paywallBlock: {
+    gap: 8,
+    paddingBottom: 8,
+  },
   th: {
     fontWeight: 'bold',
   },
@@ -171,7 +175,7 @@ export default function PaywallScreen({
       {/* <Text> Custom JSON: { currentPaywall?.json }</Text> */}
       <View style={styles.root}>
         {currentPaywall ? (
-          <>
+          <View style={styles.paywallBlock}>
             <Button
               title="Display paywall screen"
               onPress={() =>
@@ -180,7 +184,7 @@ export default function PaywallScreen({
                     placementIdentifier: currentPaywall.placementIdentifier,
                   },
                   (product) => console.log('transaction started', product),
-                  () => console.log('fineshed'),
+                  (result) => console.log('fineshed', result),
                   (error) => console.log('error', error)
                 )
               }
@@ -193,7 +197,7 @@ export default function PaywallScreen({
                 });
               }}
             />
-          </>
+          </View>
         ) : null}
         <View style={styles.table}>
           <View style={styles.row}></View>
