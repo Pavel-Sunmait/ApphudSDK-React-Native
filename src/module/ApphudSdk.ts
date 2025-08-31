@@ -14,6 +14,7 @@ import type {
   ApphudPlacement,
   Identifiers,
   PaywallLogsInfo,
+  ApphudPaywallResult,
 } from './types';
 
 interface IApphudSdk {
@@ -298,7 +299,7 @@ interface IApphudSdk {
       placementIdentifier?: string;
     },
     onTransactionStarted: (product: ApphudProduct | null) => void,
-    onControllerFinished: () => void,
+    onControllerFinished: (result: ApphudPaywallResult) => void,
     onError: (error: any) => void
   ) => void;
 
