@@ -26,7 +26,9 @@ const NativePaywallScreenView = requireNativeComponent<{
       error: LoadingViewError;
     }>
   ) => void;
-  onTransactionStarted?: (product: ApphudProduct | null) => void;
+  onTransactionStarted?: (
+    event: NativeSyntheticEvent<{ result: ApphudProduct | null }>
+  ) => void;
   onFinished?: (
     event: NativeSyntheticEvent<{ result: ApphudPaywallResult }>
   ) => void;
