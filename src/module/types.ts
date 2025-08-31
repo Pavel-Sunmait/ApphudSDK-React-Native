@@ -627,3 +627,24 @@ export interface PaywallLogsInfo {
   placementIdentifier?: string;
   paywallIdentifier?: string;
 }
+
+export interface ApphudPurchaseResult {
+  subscription?: ApphudSubscription;
+  nonRenewingPurchase?: ApphudNonRenewingPurchase;
+  isRestoreResult: boolean;
+  success: boolean;
+  errror?: string;
+}
+
+export type ApphudPaywallResult =
+  | {
+      type: 'success';
+      data: ApphudPurchaseResult;
+    }
+  | {
+      type: 'failure';
+      error: string;
+    }
+  | {
+      type: 'userClosed';
+    };

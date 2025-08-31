@@ -10,4 +10,10 @@ class PaywallScreenViewManager : RCTViewManager {
   override class func requiresMainQueueSetup() -> Bool {
     return false
   }
+  
+  @objc func reload(_ reactTag: NSNumber) {
+    if let view = bridge.uiManager.view(forReactTag: reactTag) as? PaywallScreenView {
+      view.reload()
+    }
+  }
 }

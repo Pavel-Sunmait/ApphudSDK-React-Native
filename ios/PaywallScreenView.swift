@@ -1,13 +1,48 @@
 import Foundation
 import ApphudSDK
 
+fileprivate struct SerializedError : RNAdapter {
+  let code: Int
+  let userInfo: [AnyHashable: Any]?
+  let localizedDescription: String
+  let domain: String
+  
+  init(
+    code: Int,
+    userInfo: [AnyHashable : Any]?,
+    localizedDescription: String,
+    domain: String
+  ) {
+    self.code = code
+    self.userInfo = userInfo
+    self.localizedDescription = localizedDescription
+    self.domain = domain
+  }
+  
+  init(from error: NSError) {
+    self.code = error.code
+    self.userInfo = error.userInfo
+    self.localizedDescription = error.localizedDescription
+    self.domain = error.domain
+  }
+  
+  func toMap() -> NSDictionary {
+    var map: [AnyHashable: Any] = [:]
+    map["code"] = code
+    map["userInfo"] = userInfo
+    map["localizedDescription"] = localizedDescription
+    map["domain"] = domain
+    
+    return map as NSDictionary
+  }
+}
+
 class PaywallScreenView : UIView {
   @objc var onStartLoading: RCTBubblingEventBlock? = nil
   @objc var onReceiveView: RCTBubblingEventBlock? = nil
   @objc var onLoadingError: RCTBubblingEventBlock? = nil
   @objc var onTransactionStarted: RCTBubblingEventBlock? = nil
   @objc var onFinished: RCTBubblingEventBlock? = nil
-
 
   private var currentController: ApphudPaywallScreenController? = nil {
     willSet {
@@ -62,7 +97,10 @@ class PaywallScreenView : UIView {
     }
   }
   
-    
+  func reload() {
+    setupView()
+  }
+  
   private func setupView() {
     isUserInteractionEnabled = true
     guard let placementIdentifier = placementIdentifier else {
@@ -84,13 +122,14 @@ class PaywallScreenView : UIView {
           $0.identifier == placementIdentifier
         }
       
-        guard let paywall = placement?.paywall else {
+        guard let paywall = placement?.paywall else {  
+          let error = NSError(
+            domain: "ApphudView",
+            code: 404,
+            userInfo: [NSLocalizedDescriptionKey: "Paywall not not found"])
+          
           self.onLoadingError?([
-            "error":
-              NSError(
-                domain: "ApphudView",
-                code: 404,
-                userInfo: [NSLocalizedDescriptionKey: "Paywall not not found"]),
+            "error": SerializedError(from: error).toMap(),
             "placementIdentifier": placementIdentifier
           ])
           return
@@ -110,10 +149,13 @@ class PaywallScreenView : UIView {
               self.currentController = controller
               break
             case .error(let error):
-              self.onLoadingError?([
-                "error": error,
-                "placementIdentifier": placementIdentifier
-              ])
+              
+              self.onLoadingError?(
+                [
+                  "error": SerializedError(from: error).toMap(),
+                  "placementIdentifier": placementIdentifier
+                ]
+              )
               break
             }
           }
