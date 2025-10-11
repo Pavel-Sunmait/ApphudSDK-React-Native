@@ -402,9 +402,9 @@ class ApphudSdk: NSObject {
   
   @MainActor
   @objc(
-    displayPaywallScreen:onControllerTransactionStarted:onControllerFinished:onError:
+    displayPaywallScreenIOS:onControllerTransactionStarted:onControllerFinished:onError:
   )
-  func displayPaywallScreen(
+  func displayPaywallScreenIOS(
     options: NSDictionary,
     onControllerTransactionStarted: @escaping RCTResponseSenderBlock,
     onControllerFinished: @escaping RCTResponseSenderBlock,

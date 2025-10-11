@@ -241,6 +241,13 @@ export interface ApphudNonRenewingPurchase {
   isActive: boolean;
 }
 
+export interface IPurchaseAndroid {
+  orderId: string;
+  purchaseState: number;
+  purchaseTime: number;
+  purchaseToken: string;
+}
+
 export interface ApphudPurchaseResult {
   /**
    * Available on iOS and Android.
@@ -278,13 +285,7 @@ export interface ApphudPurchaseResult {
    *
    * Transction details from Google Play.
    */
-  purchase?: {
-    /* Android: Purchase class */
-    orderId: string;
-    purchaseState: number;
-    purchaseTime: number;
-    purchaseToken: string;
-  };
+  purchase?: IPurchaseAndroid;
 
   /**
    * Available on iOS only.
@@ -636,6 +637,9 @@ export interface ApphudPurchaseResult {
   errror?: string;
 }
 
+/**
+ * Available on iOS only
+ */
 export type ApphudPaywallResult =
   | {
       type: 'success';
@@ -647,4 +651,27 @@ export type ApphudPaywallResult =
     }
   | {
       type: 'userClosed';
+    };
+
+/**
+ * Available on Android only
+ */
+export type ApphudPaywallScreenShowResult =
+  | {
+      type: 'SubscriptionResult';
+      data: {
+        purchase: IPurchaseAndroid | null;
+        subscription: ApphudSubscription;
+      };
+    }
+  | {
+      type: 'NonRenewingResult';
+      data: {
+        purchase: IPurchaseAndroid | null;
+        nonRenewingPurchase?: ApphudNonRenewingPurchase;
+      };
+    }
+  | {
+      type: 'TransactionError';
+      error: string;
     };

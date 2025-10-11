@@ -178,16 +178,29 @@ export default function PaywallScreen({
           <View style={styles.paywallBlock}>
             <Button
               title="Display paywall screen"
-              onPress={() =>
-                ApphudSdk.displayPaywallScreen(
-                  {
-                    placementIdentifier: currentPaywall.placementIdentifier,
-                  },
-                  (product) => console.log('transaction started', product),
-                  (result) => console.log('fineshed', result),
-                  (error) => console.log('error', error)
-                )
-              }
+              onPress={() => {
+                if (Platform.OS === 'ios') {
+                  ApphudSdk.displayPaywallScreenIOS(
+                    {
+                      placementIdentifier: currentPaywall.placementIdentifier,
+                    },
+                    (product) => console.log('transaction started', product),
+                    (result) => console.log('fineshed', result),
+                    (error) => console.log('error', error)
+                  );
+                } else if (Platform.OS === 'android') {
+                  ApphudSdk.displayPaywallScreenAndroid(
+                    {
+                      placementIdentifier: currentPaywall.placementIdentifier,
+                    },
+                    () => console.log('screen shown'),
+                    (product) => console.log('transaction started', product),
+                    (result) => console.log('completed', result),
+                    () => console.log('close button tapped'),
+                    (error) => console.log('error', error)
+                  );
+                }
+              }}
             />
             <Button
               title="Navigate to screen"

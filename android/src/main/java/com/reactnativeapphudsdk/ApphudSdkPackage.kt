@@ -12,6 +12,6 @@ class ApphudSdkPackage : ReactPackage {
   }
 
   override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
-    return emptyList()
+    return mutableListOf(ApphudSdkViewManager())
   }
 }
