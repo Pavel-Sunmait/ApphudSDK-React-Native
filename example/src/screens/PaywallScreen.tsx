@@ -185,7 +185,8 @@ export default function PaywallScreen({
                       placementIdentifier: currentPaywall.placementIdentifier,
                     },
                     (product) => console.log('transaction started', product),
-                    (result) => console.log('fineshed', result),
+                    (result) => console.log('transaction completed', result),
+                    () => console.log('close button tapped'),
                     (error) => console.log('error', error)
                   );
                 } else if (Platform.OS === 'android') {

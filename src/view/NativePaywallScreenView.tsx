@@ -9,7 +9,7 @@ import {
   type ViewStyle,
   type ViewProps,
 } from 'react-native';
-import { type ApphudProduct, type ApphudPaywallResult } from '../module';
+import { type ApphudProduct, type ApphudPurchaseResult } from '../module';
 import { LoadingContent } from './LoadingContent';
 import { ErrorContent } from './ErrorContent';
 import { type LoadingViewError } from './types';
@@ -29,9 +29,10 @@ const NativePaywallScreenView = requireNativeComponent<{
   onTransactionStarted?: (
     event: NativeSyntheticEvent<{ result: ApphudProduct | null }>
   ) => void;
-  onFinished?: (
-    event: NativeSyntheticEvent<{ result: ApphudPaywallResult }>
+  onTransactionCompleted?: (
+    event: NativeSyntheticEvent<{ result: ApphudPurchaseResult | null }>
   ) => void;
+  onCloseButtonTapped?: (event: NativeSyntheticEvent<undefined>) => void;
   style?: ViewStyle;
   renderLoading?: () => ReactElement;
   renderError?: (error: LoadingViewError, onReload: () => void) => ReactElement;

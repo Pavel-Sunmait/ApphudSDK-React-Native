@@ -13,10 +13,11 @@ const PaywallNativeScreen = () => {
   return (
     <PaywallScreenView
       placementIdentifier={route.params.placementIdentifier}
-      onFinished={({ nativeEvent: { result } }) => {
-        if (result.type === 'userClosed') {
-          navigation.goBack();
-        }
+      onTransactionCompleted={({ nativeEvent: { result } }) => {
+        navigation.goBack();
+      }}
+      onCloseButtonTapped={() => {
+        navigation.goBack();
       }}
     />
   );

@@ -246,25 +246,3 @@ extension ApphudPurchaseResult : RNAdapter {
     return map as NSDictionary
   }
 }
-
-extension ApphudPaywallResult : RNAdapter {
-  func toMap() -> NSDictionary {
-    var map: [String: Any] = [:]
-    
-    switch self {
-    case .success(let result):
-      map["type"] = "success"
-      map["data"] = result.toMap()
-      break
-    case .failure(let error):
-      map["type"] = "failure"
-      map["error"] = error.localizedDescription
-      break
-    case .userClosed:
-      map["type"] = "userClosed"
-      break
-    }
-
-    return map as NSDictionary
-  }
-}

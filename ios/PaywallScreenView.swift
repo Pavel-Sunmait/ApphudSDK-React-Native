@@ -42,8 +42,9 @@ class PaywallScreenView : UIView {
   @objc var onReceiveView: RCTBubblingEventBlock? = nil
   @objc var onLoadingError: RCTBubblingEventBlock? = nil
   @objc var onTransactionStarted: RCTBubblingEventBlock? = nil
-  @objc var onFinished: RCTBubblingEventBlock? = nil
-
+  @objc var onTransactionCompleted: RCTBubblingEventBlock? = nil
+  @objc var onCloseButtonTapped: RCTBubblingEventBlock? = nil
+  
   private var currentController: ApphudPaywallScreenController? = nil {
     willSet {
       currentController?.viewWillDisappear(true)
@@ -66,13 +67,16 @@ class PaywallScreenView : UIView {
       newView.isUserInteractionEnabled = true
       onReceiveView?([:])
       
-      currentController.onFinished = { [weak self] result in
-        self?.onFinished?(["result": result.toMap()])
-        return .allow
-      }
-      
       currentController.onTransactionStarted = { [weak self] result in
         self?.onTransactionStarted?(["result": result?.toMap() as Any])
+      }
+      
+      currentController.onTransactionCompleted = {[weak self] result in
+        self?.onTransactionCompleted?(["result": result.toMap() as Any])
+      }
+      
+      currentController.onCloseButtonTapped = { [weak self] in
+        self?.onCloseButtonTapped?([:])
       }
       
       addSubview(newView)

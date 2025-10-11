@@ -6,7 +6,8 @@ RCT_EXPORT_VIEW_PROPERTY(onStartLoading, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onReceiveView, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onLoadingError, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onTransactionStarted, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onFinished, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onTransactionCompleted, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onCloseButtonTapped, RCTBubblingEventBlock)
 RCT_EXTERN_METHOD(reload:(nonnull NSNumber*)reactTag)
 
 @end

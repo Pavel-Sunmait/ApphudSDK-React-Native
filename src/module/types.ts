@@ -638,22 +638,6 @@ export interface ApphudPurchaseResult {
 }
 
 /**
- * Available on iOS only
- */
-export type ApphudPaywallResult =
-  | {
-      type: 'success';
-      data: ApphudPurchaseResult;
-    }
-  | {
-      type: 'failure';
-      error: string;
-    }
-  | {
-      type: 'userClosed';
-    };
-
-/**
  * Available on Android only
  */
 export type ApphudPaywallScreenShowResult =

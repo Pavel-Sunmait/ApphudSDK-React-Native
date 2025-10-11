@@ -402,12 +402,13 @@ class ApphudSdk: NSObject {
   
   @MainActor
   @objc(
-    displayPaywallScreenIOS:onControllerTransactionStarted:onControllerFinished:onError:
+    displayPaywallScreenIOS:onControllerTransactionStarted:onControllerTransactionCompleted:onCloseButtonTapped:onError:
   )
   func displayPaywallScreenIOS(
     options: NSDictionary,
     onControllerTransactionStarted: @escaping RCTResponseSenderBlock,
-    onControllerFinished: @escaping RCTResponseSenderBlock,
+    onControllerTransactionCompleted: @escaping RCTResponseSenderBlock,
+    onCloseButtonTapped: @escaping RCTResponseSenderBlock,
     onError: @escaping RCTResponseErrorBlock
   ) {
     guard let placementIdentifier = options["placementIdentifier"] as? String else {
@@ -436,11 +437,15 @@ class ApphudSdk: NSObject {
               onControllerTransactionStarted([product?.toMap() as Any])
             }
             
-            controller.onFinished = { result in
-              onControllerFinished([result.toMap()])
-              return .allow
+            controller.onTransactionCompleted = { result in
+              onControllerTransactionCompleted([result.toMap() as Any])
             }
             
+            controller.onCloseButtonTapped = {
+              onCloseButtonTapped([])
+            }
+            
+                        
             DispatchQueue.main.async {
               rootViewController.present(controller, animated: true)
             }
@@ -449,6 +454,7 @@ class ApphudSdk: NSObject {
 
           case .error(let error):
             onError(error)
+            
             return
           }
         }

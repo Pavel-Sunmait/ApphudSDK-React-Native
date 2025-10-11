@@ -77,7 +77,8 @@ RCT_EXTERN_METHOD(preloadPaywallScreens:(NSArray*)placementIdentifiers)
 RCT_EXTERN_METHOD(displayPaywallScreenIOS:
                   (NSDictionary *)options
                   onControllerTransactionStarted:(RCTResponseSenderBlock)onControllerTransactionStarted
-                  onControllerFinished:(RCTResponseSenderBlock)onControllerFinished
+                  onControllerTransactionCompleted:(RCTResponseSenderBlock)onControllerFinished
+                  onCloseButtonTapped:(RCTResponseSenderBlock)onCloseButtonTapped
                   onError:(RCTResponseErrorBlock)onError)
 
 
