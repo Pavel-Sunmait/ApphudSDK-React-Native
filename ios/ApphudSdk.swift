@@ -441,7 +441,9 @@ class ApphudSdk: NSObject {
             }
             
             controller.onTransactionCompleted = { result in
-              onControllerTransactionCompleted([result.toMap() as Any])
+              if result.success {
+                onControllerTransactionCompleted([result.toMap() as Any])
+              }
             }
             
             controller.onCloseButtonTapped = {

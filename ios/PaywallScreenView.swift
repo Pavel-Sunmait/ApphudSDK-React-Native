@@ -58,7 +58,7 @@ class PaywallScreenView : UIView {
       }
       
       
-      if let parentVC = findParentViewController() {
+      if let parentVC = RCTPresentedViewController() {
         currentController.willMove(toParent: parentVC)
         parentVC.addChild(currentController)
         currentController.didMove(toParent: parentVC)
@@ -164,16 +164,5 @@ class PaywallScreenView : UIView {
             }
           }
       }
-  }
-  
-  private func findParentViewController() -> UIViewController? {
-    var responder: UIResponder? = self
-    while let nextResponder = responder?.next {
-      if let viewController = nextResponder as? UIViewController {
-        return viewController
-      }
-      responder = nextResponder
-    }
-    return nil
   }
 }

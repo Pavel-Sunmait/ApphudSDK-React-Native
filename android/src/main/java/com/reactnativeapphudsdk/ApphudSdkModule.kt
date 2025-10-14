@@ -388,7 +388,9 @@ class ApphudSdkModule(reactContext: ReactApplicationContext) :
           onTransitionStarted.invoke(it?.toMap())
         },
         onTransactionCompleted = {
-          onTransactionCompleted.invoke(it.toMap())
+          if (it !is ApphudPaywallScreenShowResult.TransactionError) {
+            onTransactionCompleted.invoke(it.toMap())
+          }
         },
         onCloseButtonTapped = {
           onCloseButtonTapped.invoke()
