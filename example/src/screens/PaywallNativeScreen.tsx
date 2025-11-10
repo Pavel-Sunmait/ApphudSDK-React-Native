@@ -14,9 +14,11 @@ const PaywallNativeScreen = () => {
     <PaywallScreenView
       placementIdentifier={route.params.placementIdentifier}
       onTransactionCompleted={({ nativeEvent: { result } }) => {
+        console.log('RN: onTransactionCompleted transaction completed', JSON.stringify(result));
         navigation.goBack();
       }}
       onCloseButtonTapped={() => {
+        console.log('RN: onCloseButtonTapped close button tapped');
         navigation.goBack();
       }}
     />

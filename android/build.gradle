@@ -6,7 +6,7 @@ buildscript {
     google()
     mavenCentral()
 
-    maven { url 'https://jitpack.io' }
+//    maven { url 'https://jitpack.io' }
   }
 
   dependencies {
@@ -65,7 +65,7 @@ android {
 
 repositories {
   mavenCentral()
-  jcenter()
+//  jcenter()
   google()
 
   def found = false
@@ -140,9 +140,9 @@ dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
 
-  // implementation 'com.github.apphud:ApphudSDK-Android:3.0.0-beta1'
+   implementation 'com.apphud:ApphudSDK-Android:3.0.1'
 
-  implementation 'com.github.apphud:ApphudSDK-Android:master-SNAPSHOT'
+//  implementation 'com.github.apphud:ApphudSDK-Android:master-SNAPSHOT'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation 'com.android.billingclient:billing:7.1.1'
 }

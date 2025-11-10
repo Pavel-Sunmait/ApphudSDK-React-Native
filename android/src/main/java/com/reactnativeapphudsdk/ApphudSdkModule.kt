@@ -1,6 +1,7 @@
 package com.reactnativeapphudsdk
 
 import android.telecom.Call
+import android.util.Log
 import com.apphud.sdk.Apphud
 import com.apphud.sdk.ApphudAttributionProvider
 import com.apphud.sdk.ApphudPurchasesRestoreResult
@@ -8,6 +9,7 @@ import com.apphud.sdk.ApphudUserPropertyKey
 import com.apphud.sdk.ApphudUtils
 import com.apphud.sdk.domain.ApphudPaywallScreenShowResult
 import com.apphud.sdk.domain.ApphudProduct
+import com.apphud.sdk.internal.data.network.SdkHeaders
 //import com.apphud.sdk.managers.HeadersInterceptor
 import com.facebook.react.bridge.*
 import com.facebook.react.bridge.UiThreadUtil.runOnUiThread
@@ -22,8 +24,11 @@ class ApphudSdkModule(reactContext: ReactApplicationContext) :
   }
 
   init {
-//    HeadersInterceptor.X_SDK = "reactnative"
-//    HeadersInterceptor.X_SDK_VERSION = "2.2.0"
+    SdkHeaders.X_SDK = "reactnative"
+    val nativeSdkVersion: String = SdkHeaders.X_SDK_VERSION
+    if (!nativeSdkVersion.contains("(")) {
+      SdkHeaders.X_SDK_VERSION = "3.1.0" + "(${nativeSdkVersion})"
+    }
   }
 
   @ReactMethod
@@ -342,7 +347,7 @@ class ApphudSdkModule(reactContext: ReactApplicationContext) :
   @ReactMethod
   fun placements(promise: Promise) {
     Apphud.fetchPlacements { placements, error ->
-      if (error != null) {
+      if (error != null && placements.isNullOrEmpty()) {
         promise.reject("Error", error.localizedMessage)
         return@fetchPlacements
       }

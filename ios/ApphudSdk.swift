@@ -5,8 +5,11 @@ import StoreKit
 class ApphudSdk: NSObject {
     
   override init() {
-    ApphudHttpClient.shared.sdkType = "reactnative";
-    ApphudHttpClient.shared.sdkVersion = "2.2.0";
+    ApphudHttpClient.shared.sdkType = "reactnative"
+    let current = ApphudHttpClient.shared.sdkVersion
+    if !current.contains("(") {
+      ApphudHttpClient.shared.sdkVersion = "3.1.0" + "(\(current))"
+    }
   }
 
   @objc(start:withResolver:withRejecter:)
