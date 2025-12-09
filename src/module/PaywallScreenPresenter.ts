@@ -33,7 +33,6 @@ type EventCallbacks = {
 const emitter = new NativeEventEmitter(PaywallscreenPresenterInternal);
 const NOP = () => {};
 
-// Завязаься на нейиинг paywall
 export class PaywallScreenPresenter implements IDisposable {
   private isDisposed = false;
   private readonly id = (++paywallScreenPresenterIdInternal).toString();
