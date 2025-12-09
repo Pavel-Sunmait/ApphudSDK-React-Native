@@ -659,3 +659,7 @@ export type ApphudPaywallScreenShowResult =
       type: 'TransactionError';
       error: string;
     };
+
+export interface IDisposable {
+  dispose(): void;
+}

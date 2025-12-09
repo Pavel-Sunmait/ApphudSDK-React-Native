@@ -362,49 +362,6 @@ class ApphudSdkModule(reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
-  fun displayPaywallScreenAndroid(
-    options: ReadableMap,
-    onScreenShown: Callback,
-    onTransitionStarted: Callback,
-    onTransactionCompleted: Callback,
-    onCloseButtonTapped: Callback,
-    onError: Callback) {
-    val placementIdentifier = options.getString("placementIdentifier") ?: run {
-      onError.invoke("placementIdentifier is required")
-      return
-    }
-
-    Utils.paywall(null, placementIdentifier) { paywall ->
-      if (paywall == null) {
-        onError.invoke("Paywall not not found")
-        return@paywall
-      }
-
-      val callbacks = Apphud.ApphudPaywallScreenCallbacks(
-        onScreenShown = {
-          onScreenShown.invoke()
-        },
-        onTransactionStarted = {
-          onTransitionStarted.invoke(it?.toMap())
-        },
-        onTransactionCompleted = {
-          if (it !is ApphudPaywallScreenShowResult.TransactionError) {
-            onTransactionCompleted.invoke(it.toMap())
-          }
-        },
-        onCloseButtonTapped = {
-          onCloseButtonTapped.invoke()
-        },
-        onScreenError = {
-          onError.invoke(it.message)
-        }
-      )
-
-      Apphud.showPaywallScreen(reactApplicationContext, paywall, callbacks = callbacks)
-    }
-  }
-
-  @ReactMethod
   fun unloadPaywallScreen(options: ReadableMap, promise: Promise) {
     promise.resolve(null)
   }

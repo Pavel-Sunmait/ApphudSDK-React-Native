@@ -74,13 +74,6 @@ RCT_EXTERN_METHOD(idfv:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(preloadPaywallScreens:(NSArray*)placementIdentifiers)
-RCT_EXTERN_METHOD(displayPaywallScreenIOS:
-                  (NSDictionary *)options
-                  onControllerTransactionStarted:(RCTResponseSenderBlock)onControllerTransactionStarted
-                  onControllerTransactionCompleted:(RCTResponseSenderBlock)onControllerFinished
-                  onCloseButtonTapped:(RCTResponseSenderBlock)onCloseButtonTapped
-                  onError:(RCTResponseErrorBlock)onError)
-
 
 RCT_EXTERN_METHOD(unloadPaywallScreen:(NSDictionary*)options
                   withResolver:(RCTPromiseResolveBlock)resolve

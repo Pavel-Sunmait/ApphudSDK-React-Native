@@ -255,19 +255,6 @@ class ApphudSdk: NSObject {
         ]
       )
     }
-    //    Apphud.restorePurchases { (subscriptions, purchases, error) in
-    //      resolve([
-    //        "subscriptions": subscriptions?.map{ $0.toMap() } as Any,
-    //        "purchases": purchases?.map {
-    //          [
-    //            "productId": $0.productId,
-    //            "canceledAt": $0.canceledAt?.timeIntervalSince1970 as Any,
-    //            "purchasedAt": $0.purchasedAt.timeIntervalSince1970 as Any
-    //          ]
-    //        } as Any,
-    //        "error": error?.localizedDescription as Any,
-    //      ])
-    //    }
   }
     
   @MainActor @objc(userId:withRejecter:)
@@ -402,80 +389,7 @@ class ApphudSdk: NSObject {
   func preloadPaywallScreens(placementIdentifiers: [String]) {
     Apphud.preloadPaywallScreens(placementIdentifiers: placementIdentifiers)
   }
-  
-  @MainActor
-  @objc(
-    displayPaywallScreenIOS:onControllerTransactionStarted:onControllerTransactionCompleted:onCloseButtonTapped:onError:
-  )
-  func displayPaywallScreenIOS(
-    options: NSDictionary,
-    onControllerTransactionStarted: @escaping RCTResponseSenderBlock,
-    onControllerTransactionCompleted: @escaping RCTResponseSenderBlock,
-    onCloseButtonTapped: @escaping RCTResponseSenderBlock,
-    onError: @escaping RCTResponseErrorBlock
-  ) {
-    guard let placementIdentifier = options["placementIdentifier"] as? String else {
-      onError(
-        NSError(
-          domain: "ApphudModule",
-          code: 400,
-          userInfo: [NSLocalizedDescriptionKey: "placementIdentifier is required"]
-        )
-      )
-      return
-    }
-    
-    Apphud.fetchPlacements { placements, error in
-      let placement = placements.first { $0.identifier == placementIdentifier }
-        
-      if let paywall = placement?.paywall {
-        Apphud.fetchPaywallScreen(paywall) { result in
-          switch result {
-          case .success(let controller):
-            guard let rootViewController = RCTPresentedViewController() else {
-              return
-            }
-            
-            controller.onTransactionStarted = { product in
-              onControllerTransactionStarted([product?.toMap() as Any])
-            }
-            
-            controller.onTransactionCompleted = { result in
-              if result.success {
-                onControllerTransactionCompleted([result.toMap() as Any])
-              }
-            }
-            
-            controller.onCloseButtonTapped = {
-              onCloseButtonTapped([])
-            }
-            
-                        
-            DispatchQueue.main.async {
-              rootViewController.present(controller, animated: true)
-            }
-            
-            return
 
-          case .error(let error):
-            onError(error)
-            
-            return
-          }
-        }
-      } else {
-        onError(
-          NSError(
-            domain: "ApphudModule",
-            code: 404,
-            userInfo: [NSLocalizedDescriptionKey: "Paywall not not found"]
-          )
-        )
-      }
-
-    }
-  }
-  
   @MainActor
   @objc(unloadPaywallScreen:withResolver:withRejecter:)
   func unloadPaywallScreen(

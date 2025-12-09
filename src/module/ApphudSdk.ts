@@ -14,7 +14,6 @@ import type {
   ApphudPlacement,
   Identifiers,
   PaywallLogsInfo,
-  ApphudPaywallScreenShowResult,
 } from './types';
 
 interface IApphudSdk {
@@ -287,39 +286,6 @@ interface IApphudSdk {
    * @param placementIdentifiers
    */
   preloadPaywallScreens?(placementIdentifiers: string[]): void;
-
-  /**
-   * Available on iOS only
-   *
-   * Pre-caches specified paywall screens.
-   *
-   */
-  displayPaywallScreenIOS: (
-    options: {
-      placementIdentifier?: string;
-    },
-    onTransactionStarted: (product: ApphudProduct | null) => void,
-    onTransactionCompleted: (result: ApphudPurchaseResult) => void,
-    onCloseButtonTapped: () => void,
-    onError: (error: any) => void
-  ) => void;
-
-  /**
-   * Available on Android only
-   *
-   * Pre-caches specified paywall screens.
-   *
-   */
-  displayPaywallScreenAndroid: (
-    options: {
-      placementIdentifier?: string;
-    },
-    onScreenShown: () => void,
-    onTransactionStarted: (product: ApphudProduct | null) => void,
-    onTransactionCompleted: (result: ApphudPaywallScreenShowResult) => void,
-    onCloseButtonTapped: () => void,
-    onError: (error: any) => void
-  ) => void;
 
   /**
    * Available on iOS only
