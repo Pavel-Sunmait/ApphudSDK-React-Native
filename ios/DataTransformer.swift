@@ -239,10 +239,13 @@ extension ApphudPurchaseResult : RNAdapter {
     map["subscription"] = subscription?.toMap()
     map["nonRenewingPurchase"] = nonRenewingPurchase?.toMap()
     map["isRestoreResult"] = isRestoreResult
-    map["sucsess"] = success
-    map["error"] = error?.localizedDescription
+    map["success"] = success
     
-
+    map["error"] = error?.localizedDescription
+    if let aphError = error as? ApphudError {
+      map["error_code"] = aphError.code
+    }
+    
     return map as NSDictionary
   }
 }

@@ -133,6 +133,13 @@ export default function PaywallScreen({
       }
     );
 
+    paywallScreenPresenter?.addEventListener(
+      'transactionCompleted',
+      (product) => {
+        console.log('transactionCompleted', product);
+      }
+    );
+
     return () => {
       paywallScreenPresenter?.dispose();
     };

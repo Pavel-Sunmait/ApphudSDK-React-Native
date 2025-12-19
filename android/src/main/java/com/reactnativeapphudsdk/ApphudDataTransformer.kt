@@ -316,33 +316,26 @@ internal fun ApphudPaywallScreenShowResult.toMap(): WritableNativeMap {
     is ApphudPaywallScreenShowResult.SubscriptionResult -> {
       val purchase = purchase?.toMap()
       val subscription = subscription?.toMap()
-
-      val dataMap = WritableNativeMap().apply {
-        putMap("purchase", purchase)
-        putMap("subscription", subscription)
-      }
-
-      map.putString("type", "SubscriptionResult")
-      map.putMap("data", dataMap)
+      map.putMap("purchase", purchase)
+      map.putMap("subscription", subscription)
+      map.putBoolean("success", true)
     }
 
     is ApphudPaywallScreenShowResult.NonRenewingResult -> {
       val nonRenewingPurchase = nonRenewingPurchase?.toMap()
       val purchase = purchase?.toMap()
 
-      val dataMap = WritableNativeMap().apply {
-        putMap("purchase", purchase)
-        putMap("nonRenewingPurchase", nonRenewingPurchase)
-      }
-
-      map.putString("type", "NonRenewingResult")
-      map.putMap("data", dataMap)
+      map.putMap("purchase", purchase)
+      map.putMap("nonRenewingPurchase", nonRenewingPurchase)
+      map.putBoolean("success", true)
     }
 
     is ApphudPaywallScreenShowResult.TransactionError -> {
-      map.putString("type", "TransactionError")
+      map.putBoolean("success", false)
       map.putString("error", error.message)
-
+      if (error.errorCode != null) {
+        map.putInt("error_code", error.errorCode!!)
+      }
     }
   }
 
