@@ -8,38 +8,122 @@ import {
 const { PaywallscreenPresenter: PaywallscreenPresenterInternal } =
   NativeModules;
 
+/**
+ * Options for displaying the paywall screen.
+ */
 type Options = {
+  /**
+   * Paywall placement identifier.
+   * Used by the native layer to determine screen configuration.
+   */
   placementIdentifier: string;
 };
 
+/**
+ * Internal counter used to generate unique identifiers
+ * for PaywallScreenPresenter instances.
+ */
 let paywallScreenPresenterIdInternal = 0;
 
+/**
+ * List of event types that can be emitted by the paywall screen.
+ */
 const EVENT_TYPES = {
+  /** Purchase transaction has started */
   TRANSACTION_STARTED: 'transactionStarted',
+
+  /** Purchase transaction has completed successfully */
   TRANSACTION_COMPLETED: 'transactionCompleted',
+
+  /** User tapped the close button */
   CLOSE_BUTTON_TAPPED: 'closeButtonTapped',
+
+  /** An error occurred */
   ERROR: 'error',
+
+  /** Paywall screen was shown */
   SCREEN_SHOWN: 'screenShown',
 } as const;
 
+/**
+ * Callback signatures for each event type.
+ * Used to provide strict typing for event subscriptions.
+ */
 type EventCallbacks = {
+  /**
+   * Transaction start event.
+   * @param product The product being purchased, or null
+   */
   [EVENT_TYPES.TRANSACTION_STARTED]: (product: ApphudProduct | null) => void;
+
+  /**
+   * Transaction completion event.
+   * @param result Purchase result
+   */
   [EVENT_TYPES.TRANSACTION_COMPLETED]: (result: ApphudPurchaseResult) => void;
+
+  /**
+   * Close button tap event.
+   */
   [EVENT_TYPES.CLOSE_BUTTON_TAPPED]: () => void;
+
+  /**
+   * Error event.
+   * @param error Error object
+   */
   [EVENT_TYPES.ERROR]: (error: any) => void;
+
+  /**
+   * Screen shown event.
+   */
   [EVENT_TYPES.SCREEN_SHOWN]: () => void;
 };
 
 const emitter = new NativeEventEmitter(PaywallscreenPresenterInternal);
+
 const NOP = () => {};
 
+/**
+ * Manages displaying the paywall screen and subscribing
+ * to events emitted by the native layer.
+ *
+ * Each instance has a unique identifier used to:
+ * - associate native events with the correct presenter
+ * - isolate multiple paywall screens from each other
+ */
 export class PaywallScreenPresenter implements IDisposable {
+  /**
+   * Indicates whether this presenter has been disposed.
+   * Once disposed, the instance must no longer be used.
+   */
   private isDisposed = false;
+
+  /**
+   * Unique identifier of this presenter instance.
+   * Used to filter events received from NativeEventEmitter.
+   */
   private readonly id = (++paywallScreenPresenterIdInternal).toString();
+
+  /**
+   * Collection of active event subscriptions.
+   * Used to properly clean up listeners on dispose().
+   */
   private susbcriptions: Set<EventSubscription> = new Set();
 
+  /**
+   * Creates a new PaywallScreenPresenter instance.
+   *
+   * @param options Paywall screen options
+   */
   constructor(private readonly options: Partial<Options> = {}) {}
 
+  /**
+   * Displays the paywall screen.
+   *
+   * Passes the following data to the native layer:
+   * - paywall options
+   * - unique presenter identifier
+   */
   displayPaywallScreen() {
     PaywallscreenPresenterInternal.displayPaywallScreen({
       ...this.options,
@@ -47,6 +131,17 @@ export class PaywallScreenPresenter implements IDisposable {
     });
   }
 
+  /**
+   * Subscribes to a paywall screen event.
+   *
+   * The callback will only be invoked if the event
+   * belongs to the current presenter instance.
+   *
+   * @template Name
+   * @param name Event type
+   * @param callback Event handler
+   * @returns Function to unsubscribe from the event
+   */
   addEventListener<Name extends keyof EventCallbacks>(
     name: Name,
     callback: EventCallbacks[Name]
@@ -70,11 +165,19 @@ export class PaywallScreenPresenter implements IDisposable {
       if (this.isDisposed) {
         return;
       }
+
       this.susbcriptions.delete(subscription);
       subscription.remove();
     };
   }
 
+  /**
+   * Disposes the presenter instance.
+   *
+   * - Removes all event subscriptions
+   * - Prevents further callbacks from being invoked
+   * - Releases associated resources
+   */
   dispose() {
     this.isDisposed = true;
 
