@@ -14,32 +14,110 @@ import { LoadingContent } from './LoadingContent';
 import { ErrorContent } from './ErrorContent';
 import { type LoadingViewError } from './types';
 
+/**
+ * Native paywall screen view bridged from the native layer.
+ *
+ * This component is a thin wrapper around the native `PaywallScreenView`
+ * and is not intended to be used directly. Prefer using
+ * {@link PaywallScreenView} instead.
+ *
+ * The native view is responsible for:
+ * - loading and rendering the paywall UI
+ * - handling user interactions
+ * - emitting lifecycle and purchase-related events
+ */
 const NativePaywallScreenView = requireNativeComponent<{
+  /**
+   * Paywall placement identifier.
+   * Determines which paywall configuration should be displayed.
+   */
   placementIdentifier: string;
+
+  /**
+   * Called when the paywall starts loading.
+   */
   onStartLoading?: (
     event: NativeSyntheticEvent<{ placementIdentifier: string }>
   ) => void;
+
+  /**
+   * Called when the native paywall view is fully received and rendered.
+   */
   onReceiveView?: (event: NativeSyntheticEvent<{}>) => void;
+
+  /**
+   * Called when an error occurs while loading the paywall.
+   */
   onLoadingError?: (
     event: NativeSyntheticEvent<{
       placementIdentifier: string;
       error: LoadingViewError;
     }>
   ) => void;
+
+  /**
+   * Called when a purchase transaction starts.
+   */
   onTransactionStarted?: (
     event: NativeSyntheticEvent<{ result: ApphudProduct | null }>
   ) => void;
+
+  /**
+   * Called when a purchase transaction completes.
+   */
   onTransactionCompleted?: (
     event: NativeSyntheticEvent<{ result: ApphudPurchaseResult | null }>
   ) => void;
+
+  /**
+   * Called when the user taps the close button.
+   */
   onCloseButtonTapped?: (event: NativeSyntheticEvent<undefined>) => void;
+
+  /**
+   * Style applied to the native view.
+   */
   style?: ViewStyle;
-  renderLoading?: () => ReactElement;
-  renderError?: (error: LoadingViewError, onReload: () => void) => ReactElement;
 }>('PaywallScreenView');
 
-type Props = ComponentProps<typeof NativePaywallScreenView> & ViewProps;
+type Props = ComponentProps<typeof NativePaywallScreenView> &
+  ViewProps & {
+    /**
+     * Custom renderer for the loading state.
+     */
+    renderLoading?: () => ReactElement;
 
+    /**
+     * Custom renderer for the error state.
+     */
+    renderError?: (
+      error: LoadingViewError,
+      onReload: () => void
+    ) => ReactElement;
+  };
+
+/**
+ * React component that displays a native paywall screen.
+ * The way for usage - react-navigation screen (modal)
+ *
+ * This component:
+ * - wraps the native paywall view
+ * - manages loading and error overlay states
+ * - provides default UI for loading and error states
+ * - exposes lifecycle and purchase-related callbacks
+ *
+ * The paywall content itself is rendered natively.
+ *
+ * @example
+ * ```tsx
+ * <PaywallScreenView
+ *   placementIdentifier={placementId}
+ *   onTransactionCompleted={(event) => {
+ *     console.log(event.nativeEvent.result);
+ *   }}
+ * />
+ * ```
+ */
 export const PaywallScreenView: React.FC<Props> = ({
   onStartLoading,
   onLoadingError,

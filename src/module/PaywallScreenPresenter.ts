@@ -108,7 +108,7 @@ export class PaywallScreenPresenter implements IDisposable {
    * Collection of active event subscriptions.
    * Used to properly clean up listeners on dispose().
    */
-  private susbcriptions: Set<EventSubscription> = new Set();
+  private subscriptions: Set<EventSubscription> = new Set();
 
   /**
    * Creates a new PaywallScreenPresenter instance.
@@ -159,14 +159,14 @@ export class PaywallScreenPresenter implements IDisposable {
       }
     );
 
-    this.susbcriptions.add(subscription);
+    this.subscriptions.add(subscription);
 
     return () => {
       if (this.isDisposed) {
         return;
       }
 
-      this.susbcriptions.delete(subscription);
+      this.subscriptions.delete(subscription);
       subscription.remove();
     };
   }
@@ -181,7 +181,7 @@ export class PaywallScreenPresenter implements IDisposable {
   dispose() {
     this.isDisposed = true;
 
-    for (const sub of this.susbcriptions.values()) {
+    for (const sub of this.subscriptions.values()) {
       sub.remove();
     }
   }
