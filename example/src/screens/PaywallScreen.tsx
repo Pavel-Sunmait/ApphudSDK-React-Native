@@ -12,12 +12,19 @@ import type {
   ApphudProduct,
   ApphudPurchaseProps,
 } from '@apphud/react-native-apphud-sdk';
-import { ApphudSdk } from '@apphud/react-native-apphud-sdk';
+import {
+  ApphudSdk,
+  PaywallScreenPresenter,
+} from '@apphud/react-native-apphud-sdk';
 import { Button } from 'react-native-elements';
 
 const styles = StyleSheet.create({
   root: {
     padding: 8,
+  },
+  paywallBlock: {
+    gap: 8,
+    paddingBottom: 8,
   },
   th: {
     fontWeight: 'bold',
@@ -104,6 +111,39 @@ export default function PaywallScreen({
   const [productsProps, setProductsProps] = React.useState<Array<ProductProps>>(
     []
   );
+  const [paywallScreenPresenter, setPaywallScreenPresenter] =
+    React.useState<PaywallScreenPresenter | null>(null);
+
+  React.useEffect(() => {
+    paywallScreenPresenter?.addEventListener('closeButtonTapped', () =>
+      console.log('close button tapped')
+    );
+    paywallScreenPresenter?.addEventListener('error', (error) =>
+      console.log('error', error)
+    );
+
+    paywallScreenPresenter?.addEventListener('screenShown', () => {
+      console.log('screenShown');
+    });
+
+    paywallScreenPresenter?.addEventListener(
+      'transactionStarted',
+      (product) => {
+        console.log('transactionStarted', product);
+      }
+    );
+
+    paywallScreenPresenter?.addEventListener(
+      'transactionCompleted',
+      (product) => {
+        console.log('transactionCompleted', product);
+      }
+    );
+
+    return () => {
+      paywallScreenPresenter?.dispose();
+    };
+  }, [paywallScreenPresenter]);
 
   React.useEffect(() => {
     const findPaywall = async () => {
@@ -114,6 +154,11 @@ export default function PaywallScreen({
       for (const paywall of paywalls) {
         if (paywall.identifier === route.params.paywallId) {
           setCurrentPaywall(paywall);
+          setPaywallScreenPresenter(
+            new PaywallScreenPresenter({
+              placementIdentifier: paywall.placementIdentifier,
+            })
+          );
 
           ApphudSdk.paywallShown({
             paywallIdentifier: paywall.identifier,
@@ -170,6 +215,24 @@ export default function PaywallScreen({
       <Text> Experiment: {currentPaywall?.experimentName || 'N/A'}</Text>
       {/* <Text> Custom JSON: { currentPaywall?.json }</Text> */}
       <View style={styles.root}>
+        {paywallScreenPresenter && currentPaywall ? (
+          <View style={styles.paywallBlock}>
+            <Button
+              title="Display paywall screen"
+              onPress={() => {
+                paywallScreenPresenter.displayPaywallScreen();
+              }}
+            />
+            <Button
+              title="Navigate to screen"
+              onPress={() => {
+                navigation.navigate('PaywallNativeScreen', {
+                  placementIdentifier: currentPaywall.placementIdentifier,
+                });
+              }}
+            />
+          </View>
+        ) : null}
         <View style={styles.table}>
           <View style={styles.row}></View>
           {productsProps.map((product: ProductProps, key: number) => (

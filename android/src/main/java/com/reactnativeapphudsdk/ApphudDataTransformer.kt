@@ -9,6 +9,7 @@ import com.android.billingclient.api.Purchase
 import com.apphud.sdk.ApphudPurchaseResult
 import com.apphud.sdk.domain.ApphudNonRenewingPurchase
 import com.apphud.sdk.domain.ApphudPaywall
+import com.apphud.sdk.domain.ApphudPaywallScreenShowResult
 import com.apphud.sdk.domain.ApphudPlacement
 import com.apphud.sdk.domain.ApphudProduct
 import com.apphud.sdk.domain.ApphudSubscription
@@ -30,6 +31,7 @@ internal fun Map<String, Any>.toWritableNativeMap(): WritableNativeMap {
         (value as? Map<String, Any>)?.let {
           writableMap.putMap(key, it.toWritableNativeMap())
         }
+
       is List<*> ->
         (value as? List<Any>)?.let {
           writableMap.putArray(key, value.toWritableNativeArray())
@@ -58,6 +60,7 @@ internal fun List<Any>.toWritableNativeArray(): WritableNativeArray {
         (value as? List<Any>)?.let {
           writableArray.pushArray(it.toWritableNativeArray())
         }
+
       else -> throw IllegalArgumentException("Unsupported type: ${value::class.simpleName}")
     }
   }
@@ -284,7 +287,6 @@ fun ProductDetails.getSubscriptionPeriod(): String? {
 }
 
 
-
 internal fun ApphudUser.toMap(): WritableNativeMap {
   val userMap = WritableNativeMap()
 
@@ -305,4 +307,37 @@ internal fun ApphudPlacement.toMap() = WritableNativeMap().apply {
   experimentName?.let {
     putString("experimentName", it)
   }
+}
+
+internal fun ApphudPaywallScreenShowResult.toMap(): WritableNativeMap {
+  val map = WritableNativeMap()
+
+  when (this) {
+    is ApphudPaywallScreenShowResult.SubscriptionResult -> {
+      val purchase = purchase?.toMap()
+      val subscription = subscription?.toMap()
+      map.putMap("purchase", purchase)
+      map.putMap("subscription", subscription)
+      map.putBoolean("success", true)
+    }
+
+    is ApphudPaywallScreenShowResult.NonRenewingResult -> {
+      val nonRenewingPurchase = nonRenewingPurchase?.toMap()
+      val purchase = purchase?.toMap()
+
+      map.putMap("purchase", purchase)
+      map.putMap("nonRenewingPurchase", nonRenewingPurchase)
+      map.putBoolean("success", true)
+    }
+
+    is ApphudPaywallScreenShowResult.TransactionError -> {
+      map.putBoolean("success", false)
+      map.putString("error", error.message)
+      if (error.errorCode != null) {
+        map.putInt("error_code", error.errorCode!!)
+      }
+    }
+  }
+
+  return map
 }

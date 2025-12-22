@@ -4,7 +4,7 @@ buildscript {
 
   repositories {
     google()
-    jcenter()
+    mavenCentral()
   }
 
   dependencies {
@@ -63,7 +63,7 @@ android {
 
 repositories {
   mavenCentral()
-  jcenter()
+//  jcenter()
   google()
 
   def found = false
@@ -137,7 +137,10 @@ def kotlin_version = getExtOrDefault('kotlinVersion')
 dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
-  implementation 'com.apphud:ApphudSDK-Android:2.9.1'
+
+   implementation 'com.apphud:ApphudSDK-Android:3.0.3'
+
+//  implementation 'com.github.apphud:ApphudSDK-Android:master-SNAPSHOT'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation 'com.android.billingclient:billing:7.1.1'
 }

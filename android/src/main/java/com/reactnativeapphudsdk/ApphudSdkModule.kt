@@ -1,12 +1,16 @@
 package com.reactnativeapphudsdk
 
+import android.telecom.Call
 import android.util.Log
 import com.apphud.sdk.Apphud
 import com.apphud.sdk.ApphudAttributionProvider
+import com.apphud.sdk.ApphudPurchasesRestoreResult
 import com.apphud.sdk.ApphudUserPropertyKey
 import com.apphud.sdk.ApphudUtils
+import com.apphud.sdk.domain.ApphudPaywallScreenShowResult
 import com.apphud.sdk.domain.ApphudProduct
-import com.apphud.sdk.managers.HeadersInterceptor
+import com.apphud.sdk.internal.data.network.SdkHeaders
+//import com.apphud.sdk.managers.HeadersInterceptor
 import com.facebook.react.bridge.*
 import com.facebook.react.bridge.UiThreadUtil.runOnUiThread
 
@@ -20,8 +24,11 @@ class ApphudSdkModule(reactContext: ReactApplicationContext) :
   }
 
   init {
-    HeadersInterceptor.X_SDK = "reactnative"
-    HeadersInterceptor.X_SDK_VERSION = "2.2.0"
+    SdkHeaders.X_SDK = "reactnative"
+    val nativeSdkVersion: String = SdkHeaders.X_SDK_VERSION
+    if (!nativeSdkVersion.contains("(")) {
+      SdkHeaders.X_SDK_VERSION = "3.1.0" + "(${nativeSdkVersion})"
+    }
   }
 
   @ReactMethod
@@ -175,7 +182,6 @@ class ApphudSdkModule(reactContext: ReactApplicationContext) :
       provider = attributionParams.provider
     )
 
-//    TODO: узнать почему отличается от ios
     promise.resolve(true)
   }
 
@@ -278,21 +284,20 @@ class ApphudSdkModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun restorePurchases(promise: Promise) {
-    Apphud.restorePurchases { apphudSubscriptionList, apphudNonRenewingPurchaseList, error ->
+    Apphud.restorePurchases { result ->
       val resultMap = WritableNativeMap()
-      apphudSubscriptionList.let {
-        val arr = WritableNativeArray()
-        it?.map { obj -> arr.pushMap(obj.toMap()) }
-        resultMap.putArray("subscriptions", arr)
+
+      when(result) {
+        is ApphudPurchasesRestoreResult.Error -> {
+          resultMap.putString("error", result.error.message)
+        }
+
+        is ApphudPurchasesRestoreResult.Success -> {
+          resultMap.putArray("subscriptions", result.subscriptions.toWritableNativeArray { it.toMap() })
+          resultMap.putArray("nonRenewingPurchases", result.purchases.toWritableNativeArray { it.toMap() })
+        }
       }
-      apphudNonRenewingPurchaseList.let {
-        val arr = WritableNativeArray()
-        it?.map { obj -> arr.pushMap(obj.toMap()) }
-        resultMap.putArray("nonRenewingPurchases", arr)
-      }
-      error.let {
-        resultMap.putString("error", it?.message)
-      }
+
       promise.resolve(resultMap)
     }
   }
@@ -304,8 +309,8 @@ class ApphudSdkModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun syncPurchasesInObserverMode(promise: Promise) {
-    Apphud.restorePurchases { _, _, error ->
-      promise.resolve(error == null)
+    Apphud.restorePurchases { result ->
+      promise.resolve(result is ApphudPurchasesRestoreResult.Success)
     }
   }
 
@@ -342,7 +347,7 @@ class ApphudSdkModule(reactContext: ReactApplicationContext) :
   @ReactMethod
   fun placements(promise: Promise) {
     Apphud.fetchPlacements { placements, error ->
-      if (error != null) {
+      if (error != null && placements.isNullOrEmpty()) {
         promise.reject("Error", error.localizedMessage)
         return@fetchPlacements
       }
@@ -353,6 +358,11 @@ class ApphudSdkModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun idfv(promise: Promise) {
+    promise.resolve(null)
+  }
+
+  @ReactMethod
+  fun unloadPaywallScreen(options: ReadableMap, promise: Promise) {
     promise.resolve(null)
   }
 

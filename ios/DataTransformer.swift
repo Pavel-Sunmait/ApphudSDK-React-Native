@@ -232,3 +232,20 @@ extension NSDictionary {
     )
   }
 }
+
+extension ApphudPurchaseResult : RNAdapter {
+  func toMap() -> NSDictionary {
+    var map: [String: Any] = [:]
+    map["subscription"] = subscription?.toMap()
+    map["nonRenewingPurchase"] = nonRenewingPurchase?.toMap()
+    map["isRestoreResult"] = isRestoreResult
+    map["success"] = success
+    
+    map["error"] = error?.localizedDescription
+    if let aphError = error as? ApphudError {
+      map["error_code"] = aphError.code
+    }
+    
+    return map as NSDictionary
+  }
+}
