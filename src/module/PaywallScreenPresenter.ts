@@ -11,7 +11,7 @@ const { PaywallscreenPresenter: PaywallscreenPresenterInternal } =
 /**
  * Options for displaying the paywall screen.
  */
-type Options = {
+export type Options = {
   /**
    * Paywall placement identifier.
    * Used by the native layer to determine screen configuration.

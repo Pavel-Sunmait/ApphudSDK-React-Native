@@ -1,4 +1,8 @@
 import { NativeModules } from 'react-native';
+import {
+  PaywallScreenPresenter,
+  type Options as PaywallScreenPresenterOptions,
+} from './PaywallScreenPresenter';
 import type {
   StartProperties,
   ApphudProduct,
@@ -304,4 +308,20 @@ if (!_ApphudSdk && __DEV__) {
   );
 }
 
-export const ApphudSdk = _ApphudSdk as IApphudSdk;
+type ApphudSdkPresenterProvider = {
+  /**
+   *
+   * @param options Uses for class constructor
+   * @return instance of PaywallScreenPresenter
+   */
+  createPresenter(
+    options: PaywallScreenPresenterOptions
+  ): PaywallScreenPresenter;
+};
+
+const ApphudSdkBase = _ApphudSdk as IApphudSdk;
+
+export const AppHudSdk: IApphudSdk & ApphudSdkPresenterProvider = {
+  ...ApphudSdkBase,
+  createPresenter: (options) => new PaywallScreenPresenter(options),
+};
