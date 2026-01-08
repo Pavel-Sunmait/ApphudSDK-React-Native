@@ -321,7 +321,7 @@ type ApphudSdkPresenterProvider = {
 
 const ApphudSdkBase = _ApphudSdk as IApphudSdk;
 
-export const AppHudSdk: IApphudSdk & ApphudSdkPresenterProvider = {
+export const ApphudSdk: IApphudSdk & ApphudSdkPresenterProvider = {
   ...ApphudSdkBase,
   createPresenter: (options) => new PaywallScreenPresenter(options),
 };
