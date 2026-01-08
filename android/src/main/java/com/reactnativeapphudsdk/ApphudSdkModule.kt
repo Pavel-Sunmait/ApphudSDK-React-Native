@@ -146,7 +146,7 @@ class ApphudSdkModule(reactContext: ReactApplicationContext) :
   }
 
   private fun purchaseSubscription(product: ApphudProduct, offerToken: String?, promise: Promise) {
-    this.currentActivity?.let {
+    reactApplicationContext.currentActivity?.let {
       Apphud.purchase(it, product, offerToken) { res ->
         promise.resolve(res.toMap())
       }
@@ -160,7 +160,7 @@ class ApphudSdkModule(reactContext: ReactApplicationContext) :
     isConsumable: Boolean,
     promise: Promise
   ) {
-    this.currentActivity?.let {
+    reactApplicationContext.currentActivity?.let {
       Apphud.purchase(it, product, null, null, null, isConsumable) { res ->
         promise.resolve(res.toMap())
       }
